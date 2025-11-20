@@ -123,25 +123,3 @@ def create_dataset():
 
     return train_ds, val_ds, test_ds
     
-
-if __name__ == "__main__":
-
-    train_ds, val_ds, test_ds = create_dataset()
-
-    print(">>> DATA LOADER WORKING <<<")
-
-    print("Train batches:")
-    for images, masks in train_ds.take(1):
-        print("images:", images.shape)
-        print("masks:", masks.shape)
-
-    print("\nValidation batches:")
-    for images, masks in val_ds.take(1):
-        print("images:", images.shape)
-        print("masks:", masks.shape)
-
-    print("\nTest batches:")
-    for images, masks in test_ds.take(1):
-        print("images:", images.shape)
-        print("masks:", masks.shape)
-
