@@ -1,0 +1,47 @@
+# Ignore dataset folder (all images + masks)
+Dataset/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment folders
+venv/
+env/
+.tf_env/
+.conda/
+conda/
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore logs and checkpoints
+*.log
+*.ckpt
+*.h5
+
+# Ignore temporary training outputs
+logs/
+checkpoints/
+saved_models/
+
+# Ignore TensorFlow auto-generated files
+*.pb
+*.tfrecord
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore large model weights
+*.h5
+*.hdf5
+*.onnx
+*.pth
+*.pt
