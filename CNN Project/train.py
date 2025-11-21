@@ -7,8 +7,7 @@ def components():
     train_set, val_set, test_set = create_dataset()
     sod_model = model()
     opt = optimizer()
-
-    return train_set,val_set,test_set,sod_model,opt
+    return sod_model, opt, train_set, val_set,test_set
 
     
 
