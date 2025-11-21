@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras 
 from keras import layers, Model, losses, optimizers,Input
 
-def model(input_shape=(128,128,3)):
+def set_sod_model(input_shape=(128,128,3)):
     
     input_l = Input(shape=input_shape)
 
