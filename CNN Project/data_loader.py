@@ -95,7 +95,7 @@ def create_dataset():
         preprocessed_masks.append(mask)
 
     #Splitting of data into train, test and validation sets
-    train_images, temp_images, train_masks, temp_masks = model_selection.train_test_split(preprocessed_images, preprocessed_masks, test_size=0.2, random_state=67)
+    train_images, temp_images, train_masks, temp_masks = model_selection.train_test_split(preprocessed_images, preprocessed_masks, test_size=0.3, random_state=67)
     test_images, validation_images, test_masks, validation_masks = model_selection.train_test_split(temp_images,temp_masks,test_size=0.5,random_state=67)
 
     #Datapipelining 
