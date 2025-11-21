@@ -27,12 +27,11 @@ def sod_model(input_shape=(128,128,3)):
 
 
     #Model 
-    model = Model(inputs = input_l,output = output_l)
+    model = Model(inputs = input_l,outputs = output_l)
     return model
 
 
 bce_fn = losses.BinaryCrossentropy()
-
 
 #IoU for Training
 def soft_IoU(y_true,y_pred,epsilon=1e-7):
@@ -62,6 +61,6 @@ def sod_loss(y_true, y_pred):
     return loss
 
 def optimizer():
-    pass
+    return optimizers.Adam(learning_rate=0.001)
 
 
