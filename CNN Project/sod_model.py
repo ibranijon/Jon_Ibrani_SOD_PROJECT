@@ -1,12 +1,12 @@
 import tensorflow as tf 
 from tensorflow import keras 
-from keras import layers, Model, losses, optimizers
+from keras import layers, Model, losses, optimizers,Input
 
 def sod_model(input_shape=(128,128,3)):
     
-    input_l = keras.Input(shape=input_shape)
+    input_l = Input(shape=input_shape)
 
-    #Encoder - Conv2 and Maxpooling 128-64-32-16
+    #Encoder - Conv2 and Maxpooling 16-32-64-128
     
     l = layers.Conv2D(filters=32,kernel_size=3,padding='same',activation='relu')(input_l)
     l = layers.MaxPooling2D(pool_size=2)(l)
@@ -17,7 +17,7 @@ def sod_model(input_shape=(128,128,3)):
     l = layers.Conv2D(filters=128,kernel_size=3,padding='same',activation='relu')(l)
     l = layers.MaxPooling2D(pool_size=2)(l)
 
-    #Decoder - Convtransport2d
+    #Decoder - Convtransport2d 128-64-32-16
 
     l = layers.Conv2DTranspose(filters=64,kernel_size=3,strides=2,padding='same',activation='relu')(l)
     l = layers.Conv2DTranspose(filters=32,kernel_size=3,strides=2,padding='same',activation='relu')(l)
@@ -31,14 +31,33 @@ def sod_model(input_shape=(128,128,3)):
     return model
 
 
-bce = losses.binary_crossentropy()
+bce_fn = losses.BinaryCrossentropy()
 
-def iou():
-    pass
 
-def loss():
-    bce = 2
-    iou = iou(y_pred,y)
+#IoU for Training
+def soft_IoU(y_true,y_pred,epsilon=1e-7):
+
+    intersection = tf.reduce_sum(y_true * y_pred)
+    union = tf.reduce_sum(y_true)+ tf.reduce_sum(y_pred) - intersection
+    iou = (intersection)/(union + epsilon)
+    return iou
+
+#IoU for Evaluation
+def hard_IoU(y_true,y_pred,epsilon=1e-7):
+
+    #Casting from probability to hard 0 or 1 
+    y_defined = tf.cast(y_pred>0.5, dtype=tf.float32)
+
+    #IoU Caculation
+    intersection = tf.reduce_sum(y_true * y_defined)
+    union = tf.reduce_sum(y_true)+ tf.reduce_sum(y_defined) - intersection
+    iou = (intersection)/(union + epsilon)
+    return iou
+
+#Loss Function combining both bce and IoU
+def sod_loss(y_true, y_pred):
+    bce = bce_fn(y_true, y_pred)
+    iou = soft_IoU(y_true, y_pred)
     loss = bce + 0.5 * (1-iou)
     return loss
 
