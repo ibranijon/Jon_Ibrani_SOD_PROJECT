@@ -1,6 +1,7 @@
 from sod_model import set_sod_model,sod_loss,optimizer,hard_IoU
 from data_loader import create_dataset
 import tensorflow as tf
+import os
 
 def components():
     train_set, val_set, test_set = create_dataset()
@@ -11,10 +12,13 @@ def components():
 
 def set_checkpoint(sod_model,opt):
     #checkpoint creater
+    file_path = os.path.dirname(os.path.abspath(__file__))
+    checkpoint_path = os.path.join(file_path,'checkpoints')
+    
     checkp = tf.train.Checkpoint(model=sod_model,optimizer=opt, step=tf.Variable(0))#Ruju qisaj!!!
 
     #manager putter of last checkpoint into the checkpoint file
-    manager = tf.train.CheckpointManager(checkp, './checkpoints',max_to_keep=3)
+    manager = tf.train.CheckpointManager(checkp, checkpoint_path ,max_to_keep=3)
     #if condition to check if there is anythin in the checkpoint file otherwise nuke it
     if manager.latest_checkpoint:
         print(f'Restoring from {manager.latest_checkpoint}')

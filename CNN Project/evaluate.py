@@ -2,6 +2,7 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from data_loader import create_dataset
 from sod_model import set_sod_model, optimizer
@@ -14,9 +15,12 @@ def load_model_testset():
 
     sod_model = set_sod_model()
     opt = optimizer()
+    file_path = os.path.dirname(os.path.abspath(__file__))
+    checkpoint_path = os.path.join(file_path,'checkpoints')
     
+
     checkp = tf.train.Checkpoint(model=sod_model,optimizer=opt,step=tf.Variable(0))
-    manager = tf.train.CheckpointManager(checkp,'./checkpoints', max_to_keep=3)
+    manager = tf.train.CheckpointManager(checkp,checkpoint_path, max_to_keep=3)
     if manager.latest_checkpoint:
         print(f'Loading checkpoint {manager.latest_checkpoint}')
         checkp.restore(manager.latest_checkpoint).expect_partial()
