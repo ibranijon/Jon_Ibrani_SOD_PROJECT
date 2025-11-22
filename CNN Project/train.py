@@ -2,7 +2,6 @@ from sod_model import set_sod_model,sod_loss,optimizer,hard_IoU
 from data_loader import create_dataset
 import tensorflow as tf
 
-
 def components():
     train_set, val_set, test_set = create_dataset()
     sod_model = set_sod_model()
@@ -12,7 +11,7 @@ def components():
 
 def set_checkpoint(sod_model,opt):
     #checkpoint creater
-    checkp = tf.train.Checkpoint(model=sod_model,optimizer=opt, step=tf.Variable(0))
+    checkp = tf.train.Checkpoint(model=sod_model,optimizer=opt, step=tf.Variable(0))#Ruju qisaj!!!
 
     #manager putter of last checkpoint into the checkpoint file
     manager = tf.train.CheckpointManager(checkp, './checkpoints',max_to_keep=3)
@@ -49,5 +48,52 @@ def val_pass(sod_model, image, mask):
     return loss,hIoU
 
 
+
+nEpoch = 20
+
 def train():
-    pass
+    #Set Up Model, Optimizer, Datasets, CheckPoints
+    sod_model, opt, train_set, val_set, test_set = components()
+    checkp, manager = set_checkpoint(sod_model,opt)
+    best_val_loss = float('inf') #the values assigned its so bad that loss cant never be smaller than this, garanting your first checkpoint
+    #for loop that runs n times
+    for n in range(int(checkp.step),nEpoch):
+
+        train_loss = []
+        val_loss = []
+        hIoU_list = []
+
+        #train_pass
+        for images,masks in train_set:
+            loss = train_pass(sod_model,opt,images,masks)
+            train_loss.append(loss)
+
+        #val_pass
+        for images,masks in val_set:
+            vloss,HIoU = val_pass(sod_model,images,masks)
+            val_loss.append(vloss)
+            hIoU_list.append(HIoU)
+
+
+        #Computer epoch averages
+        avg_train_loss = sum(train_loss)/len(train_loss)
+        avg_val_loss = sum(val_loss)/len(val_loss)
+        avg_hIoU = sum(hIoU_list)/len(hIoU_list)
+
+
+        #Logging 
+        print(f'Epoch {n+1}/{nEpoch} - Train Loss:{avg_train_loss} - Val Loss:{avg_val_loss} - Val IoU:{avg_hIoU}')
+
+        #checkpoint update
+        if best_val_loss < avg_val_loss:
+            best_val_loss = avg_val_loss
+            checkp.step.assign(n+1)
+            manager.save()
+            print('Checkpoint Saved')
+
+
+def main():
+    train()
+
+if __name__ == "__main__":
+    main()
