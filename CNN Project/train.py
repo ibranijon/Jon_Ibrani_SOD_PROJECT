@@ -56,8 +56,9 @@ def train():
     sod_model, opt, train_set, val_set, test_set = components()
     checkp, manager = set_checkpoint(sod_model,opt)
     best_val_loss = float('inf') #the values assigned its so bad that loss cant never be smaller than this, garanting your first checkpoint
+    start_epoch = int(checkp.step.numpy())
     #for loop that runs n times
-    for n in range(int(checkp.step),nEpoch):
+    for n in range(start_epoch,nEpoch):
 
         train_loss = []
         val_loss = []
@@ -85,7 +86,7 @@ def train():
         print(f'Epoch {n+1}/{nEpoch} - Train Loss:{avg_train_loss} - Val Loss:{avg_val_loss} - Val IoU:{avg_hIoU}')
 
         #checkpoint update
-        if best_val_loss < avg_val_loss:
+        if best_val_loss > avg_val_loss:
             best_val_loss = avg_val_loss
             checkp.step.assign(n+1)
             manager.save()
