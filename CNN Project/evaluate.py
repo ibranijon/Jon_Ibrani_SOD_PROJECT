@@ -70,6 +70,60 @@ def compute_metrics(sod_model, test_set):
 
     return precision_list, recall_list, f1_list, iou_list, mae_list
 
+import matplotlib.pyplot as plt
+
+import random
+
+def visualize_predictions(model, test_set, num_images=3):
+    # Collect all test images into lists (small, test set only)
+    all_images = []
+    all_masks = []
+
+    for images, masks in test_set:
+        for i in range(images.shape[0]):
+            all_images.append(images[i])
+            all_masks.append(masks[i])
+
+    # Pick random indices
+    indices = random.sample(range(len(all_images)), num_images)
+
+    for idx in indices:
+        img = all_images[idx].numpy()
+        gt_mask = all_masks[idx].numpy().squeeze()
+
+        pred = model(tf.expand_dims(all_images[idx], 0), training=False)
+        pred_mask = tf.cast(pred > 0.5, tf.float32)[0].numpy().squeeze()
+
+        # Overlay (in red)
+        overlay = img.copy()
+        overlay[..., 0] = np.maximum(overlay[..., 0], pred_mask)
+
+        plt.figure(figsize=(12, 8))
+
+        plt.subplot(1, 4, 1)
+        plt.title("Original")
+        plt.imshow(img)
+        plt.axis("off")
+
+        plt.subplot(1, 4, 2)
+        plt.title("Ground Truth")
+        plt.imshow(gt_mask, cmap="gray")
+        plt.axis("off")
+
+        plt.subplot(1, 4, 3)
+        plt.title("Prediction")
+        plt.imshow(pred_mask, cmap="gray")
+        plt.axis("off")
+
+        plt.subplot(1, 4, 4)
+        plt.title("Overlay")
+        plt.imshow(overlay)
+        plt.axis("off")
+
+        plt.show()
+
+
+
 def evaluate():
     #Call of model, data and metric compiler
     sod_model, test_set = load_model_testset()
@@ -89,9 +143,16 @@ def evaluate():
     print(f'IOU:{iou}')
     print(f'Mean average error:{mae}')
 
+    print("\nGenerating visualizations...\n")
+    visualize_predictions(sod_model, test_set, num_images=3)
 
 
 
+def main():
+    evaluate()
+
+if __name__ == "__main__":
+    evaluate()
 
 
 
