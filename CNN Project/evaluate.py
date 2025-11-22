@@ -47,9 +47,8 @@ def compute_metrics(sod_model, test_set):
         mask_preds = tf.cast((mask_preds>0.5), tf.float32)
         masks = tf.cast(masks,tf.float32)
 
-        #Calculation of TP,FP,TN,FN
+        #Calculation of TP,FP,FN
         TP = tf.reduce_sum(tf.cast(((mask_preds==1) & (masks == 1)),tf.float32))
-        TN = tf.reduce_sum(tf.cast(((mask_preds==0) & (masks == 0)),tf.float32))
         FN = tf.reduce_sum(tf.cast(((mask_preds==0) & (masks == 1)),tf.float32))
         FP = tf.reduce_sum(tf.cast(((mask_preds==1) & (masks == 0)),tf.float32))
         
@@ -70,10 +69,6 @@ def compute_metrics(sod_model, test_set):
         mae_list.append(mae.numpy())
 
     return precision_list, recall_list, f1_list, iou_list, mae_list
-
-
-
-
 
 def evaluate():
     #Call of model, data and metric compiler
