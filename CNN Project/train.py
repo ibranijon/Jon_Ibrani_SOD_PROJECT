@@ -53,7 +53,7 @@ def val_pass(sod_model, image, mask):
 
 
 
-nEpoch = 20
+nEpoch = 25
 
 def train():
     #Set Up Model, Optimizer, Datasets, CheckPoints
