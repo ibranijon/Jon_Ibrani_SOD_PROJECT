@@ -9,25 +9,30 @@ def set_sod_model(input_shape=(128,128,3)):
     #Encoder - Conv2 and Maxpooling 16-32-64-128
     
     l = layers.Conv2D(filters=32,kernel_size=3,padding='same',activation='relu')(input_l)
-
+    l = layers.Conv2D(filters=32,kernel_size=3,padding='same',activation='relu')(l)
     l = layers.BatchNormalization()(l)
     l = layers.MaxPooling2D(pool_size=2)(l)
 
     l = layers.Conv2D(filters=64,kernel_size=3,padding='same',activation='relu')(l)
-
+    l = layers.Conv2D(filters=64,kernel_size=3,padding='same',activation='relu')(l)
     l = layers.BatchNormalization()(l)
     l = layers.MaxPooling2D(pool_size=2)(l)
 
     l = layers.Conv2D(filters=128,kernel_size=3,padding='same',activation='relu')(l)
-
+    l = layers.Conv2D(filters=128,kernel_size=3,padding='same',activation='relu')(l)
     l = layers.BatchNormalization()(l)
     l = layers.MaxPooling2D(pool_size=2)(l)
 
     #Decoder - Convtransport2d 128-64-32-16
 
     l = layers.Conv2DTranspose(filters=64,kernel_size=3,strides=2,padding='same',activation='relu')(l)
+    l = layers.Conv2D(filters=64,kernel_size=3,padding='same',activation='relu')(l)
+
     l = layers.Conv2DTranspose(filters=32,kernel_size=3,strides=2,padding='same',activation='relu')(l)
+    l = layers.Conv2D(filters=32,kernel_size=3,padding='same',activation='relu')(l)
+
     l = layers.Conv2DTranspose(filters=16,kernel_size=3,strides=2,padding='same',activation='relu')(l)
+    l = layers.Conv2D(filters=16,kernel_size=3,padding='same',activation='relu')(l)
     
     output_l = layers.Conv2D(filters=1, kernel_size=1 , padding='same',activation='sigmoid')(l)
 
