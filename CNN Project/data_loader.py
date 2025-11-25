@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from sklearn import model_selection
 import tensorflow as tf 
-from tensorflow import image
+
 
 
 height = 128

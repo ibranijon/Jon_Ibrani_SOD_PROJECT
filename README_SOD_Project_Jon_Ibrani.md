@@ -18,6 +18,11 @@ pip install matplotlib
 pip install ipywidgets
 ```
 
+
+## Checkpoint
+
+This project includes a dedicated checkpoint folder that stores a pre-trained version of the model. Its purpose is to enable quick evaluation, demonstration, or continued training without requiring a full retraining cycle. If you wish to train the model from scratch, you must delete the entire checkpoint folder before initiating the training process; otherwise, the training script will automatically load the latest saved state and resume from it. During training, new checkpoints are generated to record the model’s progress. This mechanism helps prevent data loss in the event of an interruption, allowing training to continue seamlessly upon restart. To avoid unintended overfitting caused by repeatedly resuming from previous runs, ensure that the checkpoint folder is removed before starting any fresh training session.
+
 ## Dataset
 
 The dataset used is DUTS, containing two folders:
