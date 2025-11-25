@@ -64,7 +64,7 @@ def hard_IoU(y_true,y_pred,epsilon=1e-7):
     iou = (intersection)/(union + epsilon)
     return iou
 
-#Loss Function combining both bce and IoU
+#Loss Function combining both bce and soft IoU
 def sod_loss(y_true, y_pred):
     bce = bce_fn(y_true, y_pred)
     iou = soft_IoU(y_true, y_pred)

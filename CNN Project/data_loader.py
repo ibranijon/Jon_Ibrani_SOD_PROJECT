@@ -4,6 +4,8 @@ import numpy as np
 import cv2
 from sklearn import model_selection
 import tensorflow as tf 
+from tensorflow import image
+
 
 height = 128
 width = 128
@@ -43,19 +45,19 @@ def data_preprocessing(image_path,mask_path):
     mask = cv2.resize(mask, (height,width), interpolation= cv2.INTER_NEAREST)
 
     #Normalization of the values from 0-255 to 0-1
-    #Moreover, uses float32 to make sure there is no issues with tensor flow
+    #Moreover, uses float32 to make sure there is no issues with tensorflow
 
     image = image.astype(np.float32)/255.0
     mask = mask.astype(np.float32)/255.0
 
-    #Masks don't have channels, but we need to give them one to ensure compatibility with tensor flow
+    #Masks don't have channels, but we need to give them one to ensure compatibility with tensorflow
     mask = np.expand_dims(mask,axis=-1)
 
     return image,mask
 
 def augmentation(image,mask):
    
-    #Flip of image and mask & random uniform is a component that creates a random number to randomly apply augmentation to images
+    #Horizontal Flip
     if tf.random.uniform(())>0.5:
         image = tf.image.flip_left_right(image)
         mask = tf.image.flip_left_right(mask)
@@ -65,25 +67,38 @@ def augmentation(image,mask):
     if tf.random.uniform(())>0.5:
         image = tf.image.flip_up_down(image)
         mask = tf.image.flip_up_down(mask)
-   
-    #Crop of image and mask and resize back to original size to prevent crash 
-    if tf.random.uniform(())>0.5:
-        image = tf.image.random_crop(image,[112,112,3])
-        mask = tf.image.random_crop(mask,[112,112,1])
 
-        image = tf.image.resize(image,(height,width))
-        mask = tf.image.resize(mask,(height,width),method='nearest')
+    #Crop
+    if tf.random.uniform(())>0.5:
+        scales = tf.random.uniform([],0.85,1.15)
+        new_h = tf.cast(height * scales, tf.int32)
+        new_w = tf.cast(width * scales, tf.int32)
+
+        image = tf.image.resize(image, (new_h, new_w))
+        mask = tf.image.resize(mask, (new_h,new_w),method='nearest')
+
+        image = tf.image.resize_with_crop_or_pad(image, height, width)
+        mask =  tf.image.resize_with_crop_or_pad(mask,height, width)
+
 
     #Change of brightness for image only
     if tf.random.uniform(())>0.5:
         image = tf.image.random_brightness(image, max_delta=0.1)
 
+    #Change of contrast for images only 
+    if tf.random.uniform(())>0.7:
+        image = tf.image.random_contrast(image, 0.9, 1.1)
+
+    #Change of saturation for images only
+    if tf.random.uniform(())>0.7:
+        image = tf.image.random_saturation(image, 0.9, 1.1)
+    
+    image = tf.clip_by_value(image, 0.0, 1.0)
     
     #Ensure the type is float32 after augmentation to prevent mismatch with non augmented data
     image = tf.cast(image, tf.float32)
     mask = tf.cast(mask, tf.float32)
 
-   
     return image,mask
 
 def create_dataset():
@@ -106,10 +121,9 @@ def create_dataset():
     test_images, validation_images, test_masks, validation_masks = model_selection.train_test_split(temp_images,temp_masks,test_size=0.5,random_state=67)
 
     #Datapipelining 
-
-
     #Creation of train_ds. Application of augmentation, batching and prefetching
     train_ds = tf.data.Dataset.from_tensor_slices((train_images,train_masks))
+    train_ds = train_ds.shuffle(2048)
     train_ds = train_ds.map(augmentation, num_parallel_calls=tf.data.AUTOTUNE)
     train_ds = train_ds.batch(batch_size)
     train_ds = train_ds.prefetch(tf.data.AUTOTUNE)

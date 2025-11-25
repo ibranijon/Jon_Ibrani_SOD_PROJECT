@@ -3,13 +3,12 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
+import random
 from data_loader import create_dataset
 from sod_model import set_sod_model, optimizer
 
 
-#Model Prediction into the test set
-
+#Model Predictions of the Test Set
 
 def load_model_testset():
 
@@ -32,8 +31,6 @@ def load_model_testset():
 
 
 #Metric Computer 
-
-
 def compute_metrics(sod_model, test_set):
     precision_list = []
     recall_list = []
@@ -74,12 +71,10 @@ def compute_metrics(sod_model, test_set):
 
     return precision_list, recall_list, f1_list, iou_list, mae_list
 
-import matplotlib.pyplot as plt
 
-import random
 
 def visualize_predictions(model, test_set, num_images=3):
-    # Collect all test images into lists (small, test set only)
+    #Collect all test images into lists (small, test set only)
     all_images = []
     all_masks = []
 
@@ -147,7 +142,7 @@ def evaluate():
     print(f'IOU:{iou}')
     print(f'Mean average error:{mae}')
 
-    print("\nGenerating visualizations...\n")
+    print("\nGenerating sample visualizations\n")
     visualize_predictions(sod_model, test_set, num_images=3)
 
 
@@ -160,8 +155,3 @@ if __name__ == "__main__":
 
 
 
-#gathering of the confusion matrix elemetns 
-#return precision,recall,f1,iou and mae
-
-
-#visualizer

@@ -11,15 +11,15 @@ def components():
 
 
 def set_checkpoint(sod_model,opt):
-    #checkpoint creater
+    #Checkpoint creater
     file_path = os.path.dirname(os.path.abspath(__file__))
     checkpoint_path = os.path.join(file_path,'checkpoints')
     
     checkp = tf.train.Checkpoint(model=sod_model,optimizer=opt, step=tf.Variable(0))#Ruju qisaj!!!
 
-    #manager putter of last checkpoint into the checkpoint file
+    #Manager putter of last checkpoint into the checkpoint file
     manager = tf.train.CheckpointManager(checkp, checkpoint_path ,max_to_keep=3)
-    #if condition to check if there is anythin in the checkpoint file otherwise nuke it
+    #Condition to see if checkpoint file exists, if yes restore it
     if manager.latest_checkpoint:
         print(f'Restoring from {manager.latest_checkpoint}')
         checkp.restore(manager.latest_checkpoint)
@@ -33,17 +33,19 @@ def train_pass(sod_model, opt, image, mask):
 
     #Gradient tape to record all forward pass, loss calc, gradient calc
     with tf.GradientTape() as tape:
-        mask_pred = sod_model(image, training=True)#Need to understand the concept of training True and False
+        mask_pred = sod_model(image, training=True)
         loss = sod_loss(mask,mask_pred)
     
     #Calculation of gradient based on loss for each weight
     grads = tape.gradient(loss, sod_model.trainable_variables)
+
     #Application of gradient to its respective weight 
     opt.apply_gradients(zip(grads, sod_model.trainable_variables))
 
     return loss
 
 def val_pass(sod_model, image, mask):
+    
     #Calculation of forward pass and loss and hard IoU
     mask_pred = sod_model(image, training=False)
     loss = sod_loss(mask, mask_pred)
