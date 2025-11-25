@@ -59,6 +59,12 @@ def augmentation(image,mask):
     if tf.random.uniform(())>0.5:
         image = tf.image.flip_left_right(image)
         mask = tf.image.flip_left_right(mask)
+
+
+    #Vertical flip
+    if tf.random.uniform(())>0.5:
+        image = tf.image.flip_up_down(image)
+        mask = tf.image.flip_up_down(mask)
    
     #Crop of image and mask and resize back to original size to prevent crash 
     if tf.random.uniform(())>0.5:
@@ -72,6 +78,7 @@ def augmentation(image,mask):
     if tf.random.uniform(())>0.5:
         image = tf.image.random_brightness(image, max_delta=0.1)
 
+    
     #Ensure the type is float32 after augmentation to prevent mismatch with non augmented data
     image = tf.cast(image, tf.float32)
     mask = tf.cast(mask, tf.float32)
