@@ -1,5 +1,5 @@
 # Ignore dataset folder (all images + masks)
-Dataset/
+
 
 # Ignore Python cache files
 __pycache__/

@@ -35,7 +35,7 @@ Dataset/
 - `Image/` contains images.
 - `Mask/` contains binary ground truth saliency masks.
 
-If you wish to use your own dataset, **replace the contents** of `Image/` and `Mask/` with your own, but **retain the exact folder structure and file naming conventions** for compatibility with the existing pipeline.
+When implementing your dataset into the model you need, **replace the contents** of `Image/` and `Mask/` with your own, but **retain the exact folder structure and file naming conventions** for compatibility with the existing pipeline.
 
 ## How to Run the Program
 
