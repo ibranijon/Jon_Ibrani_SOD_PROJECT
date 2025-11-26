@@ -65,4 +65,4 @@ python evaluate.py
 A Jupyter Notebook interface that allows you to upload an image, perform inference, and view the predicted saliency mask along with inference time.
 
 ---
-Ensure the `Dataset` folder is located in the same root directory as the project files for proper path resolution.
+Ensure the `Dataset` folder is located in the same root directory as the project files for proper path resolution. `Dataset` with its subfolderds (`Image`,`Mask`)should be inside the CNN Project folder together with the other python files.
